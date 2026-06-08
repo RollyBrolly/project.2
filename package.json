@@ -1,0 +1,13 @@
+{
+  "name": "emergency-fund-trigger",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node web/server.mjs"
+  },
+  "dependencies": {
+    "@stellar/freighter-api": "6.0.1",
+    "@stellar/stellar-sdk": "15.0.0"
+  }
+}

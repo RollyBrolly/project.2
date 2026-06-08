@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Emergency Fund Trigger</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="topbar" aria-label="Wallet and network">
+        <div>
+          <p class="eyebrow">Stellar testnet</p>
+          <h1>Emergency Fund Trigger</h1>
+          <p class="lede">Pre-authorize urgent family payouts before the emergency happens.</p>
+        </div>
+        <div class="wallet-panel">
+          <span id="walletStatus" class="status-dot status-muted">Wallet not connected</span>
+          <button id="connectWallet" type="button">Connect Freighter</button>
+        </div>
+      </section>
+
+      <section class="metrics" aria-label="Emergency fund summary">
+        <article class="metric">
+          <span>Ready</span>
+          <strong id="activeCount">0</strong>
+        </article>
+        <article class="metric">
+          <span>Authorized</span>
+          <strong id="totalAuthorized">0 XLM</strong>
+        </article>
+        <article class="metric">
+          <span>Released</span>
+          <strong id="paidCount">0</strong>
+        </article>
+      </section>
+
+      <section class="workspace">
+        <form id="authorizationForm" class="panel primary-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Sender setup</p>
+              <h2>Create emergency authorization</h2>
+            </div>
+            <span class="badge">Pre-signed payout</span>
+          </div>
+
+          <label>
+            Sender public key
+            <input id="senderPublic" name="senderPublic" autocomplete="off" placeholder="G..." required />
+          </label>
+
+          <label>
+            Recipient public key
+            <input id="recipientPublic" name="recipientPublic" autocomplete="off" placeholder="G..." required />
+          </label>
+
+          <div class="field-grid">
+            <label>
+              Amount
+              <input id="amount" name="amount" type="number" min="0.0000001" step="0.0000001" value="25" required />
+            </label>
+            <label>
+              Asset
+              <select id="asset" name="asset">
+                <option value="XLM">XLM</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="quick-row" aria-label="Quick amount choices">
+            <button class="chip" type="button" data-amount="10">10 XLM</button>
+            <button class="chip is-selected" type="button" data-amount="25">25 XLM</button>
+            <button class="chip" type="button" data-amount="50">50 XLM</button>
+            <button class="chip" type="button" data-amount="100">100 XLM</button>
+          </div>
+
+          <div class="field-grid">
+            <label>
+              Expires in
+              <select id="expiryHours" name="expiryHours">
+                <option value="6">6 hours</option>
+                <option value="12">12 hours</option>
+                <option value="24" selected>24 hours</option>
+                <option value="72">3 days</option>
+                <option value="168">7 days</option>
+              </select>
+            </label>
+            <label>
+              Emergency reason
+              <input id="reason" name="reason" maxlength="64" placeholder="Hospital deposit" />
+            </label>
+          </div>
+
+          <div class="authorization-preview">
+            <div>
+              <span>Recipient gets</span>
+              <strong id="amountPreview">25 XLM</strong>
+            </div>
+            <div>
+              <span>Access window</span>
+              <strong id="expiryPreview">24 hours</strong>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button id="createAuthorization" type="submit">Sign authorization</button>
+            <button id="fundSender" class="secondary" type="button">Fund sender testnet</button>
+          </div>
+          <p class="hint">
+            This prepares a bounded Stellar payment and asks the sender to sign it once.
+            The recipient can submit that signed transaction later.
+          </p>
+        </form>
+      </section>
+
+      <section class="records-section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Recipient trigger</p>
+            <h2>Emergency authorizations</h2>
+          </div>
+          <div class="section-actions">
+            <div class="filters" aria-label="Authorization filters">
+              <button class="filter is-active" type="button" data-filter="all">All</button>
+              <button class="filter" type="button" data-filter="ready">Ready</button>
+              <button class="filter" type="button" data-filter="paid">Paid</button>
+              <button class="filter" type="button" data-filter="expired">Expired</button>
+            </div>
+            <button id="clearRecords" class="ghost" type="button">Clear local records</button>
+          </div>
+        </div>
+        <div id="records" class="records"></div>
+      </section>
+
+      <section class="panel notes">
+        <h2>How this maps to the production design</h2>
+        <ul>
+          <li>For a quick demo, the sender signs the future payout XDR and the recipient submits it later.</li>
+          <li>A production version should use a dedicated emergency account with multisig thresholds, rotating pre-authorized transactions, and clear expiry rules.</li>
+          <li>USDC support requires the recipient to establish a trustline before the emergency payout is created.</li>
+        </ul>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="./vendor/freighter-api.js"></script>
+    <script src="./vendor/stellar-sdk.js"></script>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
